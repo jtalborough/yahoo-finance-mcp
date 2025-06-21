@@ -91,8 +91,8 @@ async def get_historical_stock_prices(
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting historical stock prices for {ticker}: {e}")
-        return f"Error: getting historical stock prices for {ticker}: {e}"
+        print(f"Error getting historical stock prices for {ticker}: {e}")
+        return "An unexpected error occurred while fetching historical stock prices."
 
     # If the company is found, get the historical data
     hist_data = company.history(period=period, interval=interval)
@@ -119,10 +119,14 @@ async def get_stock_info(ticker: str) -> str:
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting stock information for {ticker}: {e}")
-        return f"Error: getting stock information for {ticker}: {e}"
-    info = company.info
-    return json.dumps(info)
+        print(f"Error getting stock info for {ticker}: {e}")
+        return "An unexpected error occurred while fetching stock information."
+    try:
+        info = company.info
+        return json.dumps(info)
+    except Exception as e:
+        print(f"Error getting stock info for {ticker}: {e}")
+        return "An unexpected error occurred while fetching stock information."
 
 
 @yfinance_server.tool(
@@ -147,15 +151,15 @@ async def get_yahoo_finance_news(ticker: str) -> str:
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting news for {ticker}: {e}")
-        return f"Error: getting news for {ticker}: {e}"
+        print(f"Error getting news for {ticker}: {e}")
+        return "An unexpected error occurred while fetching news."
 
     # If the company is found, get the news
     try:
         news = company.news
     except Exception as e:
-        print(f"Error: getting news for {ticker}: {e}")
-        return f"Error: getting news for {ticker}: {e}"
+        print(f"Error getting news for {ticker}: {e}")
+        return "An unexpected error occurred while fetching news."
 
     news_list = []
     for news in company.news:
@@ -187,8 +191,8 @@ async def get_stock_actions(ticker: str) -> str:
     try:
         company = yf.Ticker(ticker)
     except Exception as e:
-        print(f"Error: getting stock actions for {ticker}: {e}")
-        return f"Error: getting stock actions for {ticker}: {e}"
+        print(f"Error getting stock actions for {ticker}: {e}")
+        return "An unexpected error occurred while fetching stock actions."
     actions_df = company.actions
     actions_df = actions_df.reset_index(names="Date")
     return actions_df.to_json(orient="records", date_format="iso")
@@ -214,8 +218,8 @@ async def get_financial_statement(ticker: str, financial_type: str) -> str:
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting financial statement for {ticker}: {e}")
-        return f"Error: getting financial statement for {ticker}: {e}"
+        print(f"Error getting financial statement for {ticker}: {e}")
+        return "An unexpected error occurred while fetching financial statements."
 
     if financial_type == FinancialType.income_stmt:
         financial_statement = company.income_stmt
@@ -275,8 +279,8 @@ async def get_holder_info(ticker: str, holder_type: str) -> str:
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting holder info for {ticker}: {e}")
-        return f"Error: getting holder info for {ticker}: {e}"
+        print(f"Error getting holder info for {ticker}: {e}")
+        return "An unexpected error occurred while fetching holder information."
 
     if holder_type == HolderType.major_holders:
         return company.major_holders.reset_index(names="metric").to_json(orient="records")
@@ -312,8 +316,8 @@ async def get_option_expiration_dates(ticker: str) -> str:
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting option expiration dates for {ticker}: {e}")
-        return f"Error: getting option expiration dates for {ticker}: {e}"
+        print(f"Error getting option expiration dates for {ticker}: {e}")
+        return "An unexpected error occurred while fetching option expiration dates."
     return json.dumps(company.options)
 
 
@@ -348,8 +352,8 @@ async def get_option_chain(ticker: str, expiration_date: str, option_type: str) 
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting option chain for {ticker}: {e}")
-        return f"Error: getting option chain for {ticker}: {e}"
+        print(f"Error getting option chain for {ticker}: {e}")
+        return "An unexpected error occurred while fetching the option chain."
 
     # Check if the expiration date is valid
     if expiration_date not in company.options:
@@ -390,8 +394,8 @@ async def get_recommendations(ticker: str, recommendation_type: str, months_back
             print(f"Company ticker {ticker} not found.")
             return f"Company ticker {ticker} not found."
     except Exception as e:
-        print(f"Error: getting recommendations for {ticker}: {e}")
-        return f"Error: getting recommendations for {ticker}: {e}"
+        print(f"Error getting recommendations for {ticker}: {e}")
+        return "An unexpected error occurred while fetching recommendations."
     try:
         if recommendation_type == RecommendationType.recommendations:
             return company.recommendations.to_json(orient="records")
@@ -407,8 +411,8 @@ async def get_recommendations(ticker: str, recommendation_type: str, months_back
             latest_by_firm = upgrades_downgrades.drop_duplicates(subset=["Firm"])
             return latest_by_firm.to_json(orient="records", date_format="iso")
     except Exception as e:
-        print(f"Error: getting recommendations for {ticker}: {e}")
-        return f"Error: getting recommendations for {ticker}: {e}"
+        print(f"Error getting recommendations for {ticker}: {e}")
+        return "An unexpected error occurred while fetching recommendations."
 
 
 if __name__ == "__main__":

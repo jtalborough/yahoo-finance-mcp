@@ -1,0 +1,8 @@
+.git
+.gitignore
+.pre-commit-config.yaml
+.python-version
+README.md
+README.zh.md
+smithery.yaml
+assets/
